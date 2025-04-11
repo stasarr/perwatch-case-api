@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend API Test Sayfası</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Backend API Test Sayfası</h1>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">Kullanıcılar</h2>
+                <button id="getUsersBtn" class="btn btn-primary mb-3">Kullanıcıları Getir</button>
+                <ul id="userList" class="list-group"></ul>
+
+                <h3 class="mt-4">Yeni Kullanıcı Oluştur</h3>
+                <form id="createUserForm">
+                    <div class="form-group">
+                        <input type="text" id="userName" class="form-control" placeholder="Ad" required
+                            autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="userEmail" class="form-control" placeholder="Email" required
+                            autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <input type="number" id="userAge" class="form-control" placeholder="Yaş" required
+                            autocomplete="off">
+                    </div>
+                    <button type="submit" class="btn btn-success">Kullanıcı Oluştur</button>
+                </form>
+
+                <h3 class="mt-4">Kullanıcı Güncelle</h3>
+                <form id="updateUserForm">
+                    <div class="form-group">
+                        <input type="text" id="updateUserId" class="form-control" placeholder="Kullanıcı ID" required
+                            autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="updateName" class="form-control" placeholder="Yeni Ad" required
+                            autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="updateEmail" class="form-control" placeholder="Yeni Email" required
+                            autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <input type="number" id="updateAge" class="form-control" placeholder="Yeni Yaş" required
+                            autocomplete="off">
+                    </div>
+                    <button type="submit" class="btn btn-warning">Kullanıcı Güncelle</button>
+                </form>
+
+                <h3 class="mt-4">Kullanıcı Sil</h3>
+                <form id="deleteUserForm">
+                    <div class="form-group">
+                        <input type="text" id="deleteUserId" class="form-control" placeholder="Silinecek Kullanıcı ID"
+                            required autocomplete="off">
+                    </div>
+                    <button type="submit" class="btn btn-danger">Kullanıcı Sil</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">Postlar</h2>
+                <button id="getPostsBtn" class="btn btn-primary mb-3">Postları Getir</button>
+                <ul id="postList" class="list-group"></ul>
+
+                <h3 class="mt-4">Yeni Post Oluştur</h3>
+                <form id="createPostForm">
+                    <div class="form-group">
+                        <input type="text" id="postTitle" class="form-control" placeholder="Başlık" required
+                            autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <textarea id="postBody" class="form-control" placeholder="İçerik" required
+                            autocomplete="off"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="postUserId" class="form-control" placeholder="Kullanıcı ID" required
+                            autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="postTags" class="form-control"
+                            placeholder="Etiketler (virgül ile ayırın)" required autocomplete="off">
+                    </div>
+                    <button type="submit" class="btn btn-success">Post Oluştur</button>
+                </form>
+
+                <h3 class="mt-4">Post Güncelle</h3>
+                <form id="updatePostForm">
+                    <div class="form-group">
+                        <input type="text" id="updatePostId" class="form-control" placeholder="Post ID" required
+                            autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="updatePostTitle" class="form-control" placeholder="Yeni Başlık" required
+                            autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <textarea id="updatePostBody" class="form-control" placeholder="Yeni İçerik" required
+                            autocomplete="off"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="updatePostTags" class="form-control"
+                            placeholder="Yeni Etiketler (virgül ile ayırın)" required autocomplete="off">
+                    </div>
+                    <button type="submit" class="btn btn-warning">Post Güncelle</button>
+                </form>
+
+                <h3 class="mt-4">Post Sil</h3>
+                <form id="deletePostForm">
+                    <div class="form-group">
+                        <input type="text" id="deletePostId" class="form-control" placeholder="Silinecek Post ID"
+                            required autocomplete="off">
+                    </div>
+                    <button type="submit" class="btn btn-danger">Post Sil</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $('#getUsersBtn').click(function () {
+            $.ajax({
+                url: '/api/users',
+                method: 'GET',
+                success: function (data) {
+                    $('#userList').empty();
+                    data.forEach(user => {
+                        $('#userList').append(`<li class="list-group-item"><strong>ID:</strong> ${user._id}, <strong>Ad:</strong> ${user.name}, <strong>Email:</strong> ${user.email} <strong>Yaş:</strong> ${user.age}</li>`);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.error : 'Kullanıcılar alınamadı.';
+                    alert(errorMessage);
+                }
+            });
+        });
+
+        $('#createUserForm').submit(function (e) {
+            e.preventDefault();
+            const userData = {
+                name: $('#userName').val(),
+                email: $('#userEmail').val(),
+                age: $('#userAge').val(),
+            };
+
+            $.ajax({
+                url: '/api/users',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(userData),
+                success: function () {
+                    alert('Yeni kullanıcı oluşturuldu.');
+                },
+                error: function (xhr, status, error) {
+                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.error : 'Bir hata oluştu.';
+                    alert(errorMessage);
+                }
+            });
+        });
+
+        $('#updateUserForm').submit(function (e) {
+            e.preventDefault();
+            const updateData = {
+                name: $('#updateName').val(),
+                email: $('#updateEmail').val(),
+                age: $('#updateAge').val(),
+            };
+            const userId = $('#updateUserId').val();
+
+            $.ajax({
+                url: `/api/users/${userId}`,
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(updateData),
+                success: function () {
+                    alert('Kullanıcı güncellendi.');
+                },
+                error: function (xhr, status, error) {
+                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.error : 'Kullanıcı güncellenemedi.';
+                    alert(errorMessage);
+                }
+            });
+        });
+
+        $('#deleteUserForm').submit(function (e) {
+            e.preventDefault();
+            const userId = $('#deleteUserId').val();
+
+            $.ajax({
+                url: `/api/users/${userId}`,
+                method: 'DELETE',
+                success: function () {
+                    alert('Kullanıcı silindi.');
+                },
+                error: function (xhr, status, error) {
+                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.error : 'Kullanıcı silinemedi.';
+                    alert(errorMessage);
+                }
+            });
+        });
+
+        $('#getPostsBtn').click(function () {
+            $.ajax({
+                url: '/api/posts',
+                method: 'GET',
+                success: function (data) {
+                    $('#postList').empty();
+                    data.forEach(post => {
+                        $('#postList').append(`<li class="list-group-item"><strong>ID:</strong> ${post._id}, <strong>Başlık:</strong> ${post.title}, <strong>Etiketler:</strong> ${post.tags.join(', ')}<br> <strong>İçerik:</strong> ${post.body}</li>`);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.error : 'Postlar alınamadı.';
+                    alert(errorMessage);
+                }
+            });
+        });
+
+        $('#createPostForm').submit(function (e) {
+            e.preventDefault();
+            const postData = {
+                title: $('#postTitle').val(),
+                body: $('#postBody').val(),
+                userId: $('#postUserId').val(),
+                tags: $('#postTags').val().split(',').map(tag => tag.trim()),
+            };
+
+            $.ajax({
+                url: '/api/posts',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(postData),
+                success: function () {
+                    alert('Yeni post oluşturuldu.');
+                },
+                error: function (xhr, status, error) {
+                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.error : 'Post oluşturulamadı.';
+                    alert(errorMessage);
+                }
+            });
+        });
+
+        $('#updatePostForm').submit(function (e) {
+            e.preventDefault();
+            const updateData = {
+                title: $('#updatePostTitle').val(),
+                body: $('#updatePostBody').val(),
+                tags: $('#updatePostTags').val().split(',').map(tag => tag.trim()),
+            };
+            const postId = $('#updatePostId').val();
+
+            $.ajax({
+                url: `/api/posts/${postId}`,
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(updateData),
+                success: function () {
+                    alert('Post güncellendi.');
+                },
+                error: function (xhr, status, error) {
+                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.error : 'Post güncellenemedi.';
+                    alert(errorMessage);
+                }
+            });
+        });
+
+        $('#deletePostForm').submit(function (e) {
+            e.preventDefault();
+            const postId = $('#deletePostId').val();
+
+            $.ajax({
+                url: `/api/posts/${postId}`,
+                method: 'DELETE',
+                success: function () {
+                    alert('Post silindi.');
+                },
+                error: function (xhr, status, error) {
+                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.error : 'Post silinemedi.';
+                    alert(errorMessage);
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>
