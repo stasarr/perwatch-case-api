@@ -16,7 +16,7 @@ services:
     volumes:
       - .:/app
     environment:
-      - PORT=3000
+      - PORT=
       - MONGO_URL=
     depends_on:
       - mongo
