@@ -1,8 +1,6 @@
-// src/controllers/user.controller.js
 const Joi = require('joi');
 const User = require('../models/user.model');
 
-// Kullanıcı listesi almak
 exports.getUsers = async (req, res) => {
   try {
     const users = await User.find();
@@ -12,11 +10,9 @@ exports.getUsers = async (req, res) => {
   }
 };
 
-// Belirli kullanıcıyı ID ile almak
 exports.getUserById = async (req, res) => {
-  // ID doğrulaması (Joi ile)
   const schema = Joi.object({
-    id: Joi.string().length(24).hex().required()  // MongoDB ObjectID formatı
+    id: Joi.string().length(24).hex().required()
   });
 
   const { error } = schema.validate(req.params);
@@ -36,9 +32,7 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-// Yeni kullanıcı oluşturmak
 exports.createUser = async (req, res) => {
-  // Kullanıcı verisi doğrulaması (Joi ile)
   const schema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().email().required(),
